@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Themd</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+
+    <!-- default theme -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Asap&display=swap');
+
+        :root {
+            --background: #FFFFFF;
+            --accent: #FCA311;
+            --color: #14213D;
+        }
+
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        body {
+            font-family: 'Asap', sans-serif;
+            min-width: calc(100% - 20px);
+            min-height: 100%;
+            background: var(--background);
+            color: var(--color);
+            padding: 10px;
+        }
+
+        #content {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        #mark {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            opacity: 0.3;
+        }
+    </style>
+
+    <!-- Appending custom theme -->
+    <script>
+        var styleHttpReq = new XMLHttpRequest();
+        styleHttpReq.open("GET", 'https://themd.jasiukiewicztym.repl.co/themes/themd.css', false);
+        styleHttpReq.send(null);
+
+        // appending style 
+        document.head.innerHTML += `<style>${styleHttpReq.responseText}</style>`
+
+        const converter = new showdown.Converter();
+
+        var md =
+            "# Title page\n" +
+
+            "This is an example of index page hosted by themd. The goal of themd is to style your\n" +
+            "markdown files with CSS in one HTML file and optional CSS file.\n" +
+
+            "## H2\n" +
+
+            "**Some bold text**\n" +
+            "*Some italic text*\n" +
+            "***Some bold italic text***"
+
+        console.log(converter.makeHtml(md))
+    </script>
+</head>
+
+<body>
+    <div id="content">
+        <h1>fdsdfs</h1>
+    </div>
+    <b id="mark">POWERED BY THEMD</b>
+</body>
+
+</html>
