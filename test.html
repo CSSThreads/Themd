@@ -2,82 +2,341 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Themd</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Themd</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.1/markdown-it.min.js"></script>
+  <link rel="stylesheet" href="/path/to/styles/default.min.css">
+  <script src="/path/to/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.6.0/build/languages/go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.6.0/build/highlight.min.js"></script>
+  <script>
+    var taskListModule = function (md, options) {
+      var disableCheckboxes = true;
+      var useLabelWrapper = false;
+      var useLabelAfter = false;
 
-    <!-- default theme -->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Asap&display=swap');
+      if (options) {
+        disableCheckboxes = !options.enabled;
+        useLabelWrapper = !!options.label;
+        useLabelAfter = !!options.labelAfter;
+      }
 
-        :root {
-            --background: #FFFFFF;
-            --accent: #FCA311;
-            --color: #14213D;
+      md.core.ruler.after('inline', 'github-task-lists', function (state) {
+        var tokens = state.tokens;
+        for (var i = 2; i < tokens.length; i++) {
+          if (isTodoItem(tokens, i)) {
+            todoify(tokens[i], state.Token);
+            attrSet(tokens[i - 2], 'class', 'task-list-item' + (!disableCheckboxes ? ' enabled' : ''));
+            attrSet(tokens[parentToken(tokens, i - 2)], 'class', 'contains-task-list');
+          }
         }
+      });
 
-        * {
-            padding: 0px;
-            margin: 0px;
+      function attrSet(token, name, value) {
+        var index = token.attrIndex(name);
+        var attr = [name, value];
+
+        if (index < 0) {
+          token.attrPush(attr);
+        } else {
+          token.attrs[index] = attr;
         }
+      }
 
-        body {
-            font-family: 'Asap', sans-serif;
-            min-width: calc(100% - 20px);
-            min-height: 100%;
-            background: var(--background);
-            color: var(--color);
-            padding: 10px;
+      function parentToken(tokens, index) {
+        var targetLevel = tokens[index].level - 1;
+        for (var i = index - 1; i >= 0; i--) {
+          if (tokens[i].level === targetLevel) {
+            return i;
+          }
         }
+        return -1;
+      }
 
-        #content {
-            width: 100%;
-            max-width: 1000px;
+      function isTodoItem(tokens, index) {
+        return isInline(tokens[index]) &&
+          isParagraph(tokens[index - 1]) &&
+          isListItem(tokens[index - 2]) &&
+          startsWithTodoMarkdown(tokens[index]);
+      }
+
+      function todoify(token, TokenConstructor) {
+        token.children.unshift(makeCheckbox(token, TokenConstructor));
+        token.children[1].content = token.children[1].content.slice(3);
+        token.content = token.content.slice(3);
+
+        if (useLabelWrapper) {
+          if (useLabelAfter) {
+            token.children.pop();
+            var id = 'task-item-' + Math.ceil(Math.random() * (10000 * 1000) - 1000);
+            token.children[0].content = token.children[0].content.slice(0, -1) + ' id="' + id + '">';
+            token.children.push(afterLabel(token.content, id, TokenConstructor));
+          } else {
+            token.children.unshift(beginLabel(TokenConstructor));
+            token.children.push(endLabel(TokenConstructor));
+          }
         }
+      }
 
-        #mark {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            opacity: 0.3;
+      function makeCheckbox(token, TokenConstructor) {
+        var checkbox = new TokenConstructor('html_inline', '', 0);
+        var disabledAttr = disableCheckboxes ? ' disabled="" ' : '';
+        if (token.content.indexOf('[ ] ') === 0) {
+          checkbox.content = '<input class="task-list-item-checkbox"' + disabledAttr + 'type="checkbox">';
+        } else if (token.content.indexOf('[x] ') === 0 || token.content.indexOf('[X] ') === 0) {
+          checkbox.content = '<input class="task-list-item-checkbox" checked=""' + disabledAttr + 'type="checkbox">';
         }
-    </style>
+        return checkbox;
+      }
 
-    <!-- Appending custom theme -->
-    <script>
-        var styleHttpReq = new XMLHttpRequest();
-        styleHttpReq.open("GET", 'https://themd.jasiukiewicztym.repl.co/themes/themd.css', false);
-        styleHttpReq.send(null);
+      function beginLabel(TokenConstructor) {
+        var token = new TokenConstructor('html_inline', '', 0);
+        token.content = '<label>';
+        return token;
+      }
 
-        // appending style 
-        document.head.innerHTML += `<style>${styleHttpReq.responseText}</style>`
+      function endLabel(TokenConstructor) {
+        var token = new TokenConstructor('html_inline', '', 0);
+        token.content = '</label>';
+        return token;
+      }
 
-        const converter = new showdown.Converter();
+      function afterLabel(content, id, TokenConstructor) {
+        var token = new TokenConstructor('html_inline', '', 0);
+        token.content = '<label class="task-list-item-label" for="' + id + '">' + content + '</label>';
+        token.attrs = [{for: id}];
+        return token;
+      }
 
-        var md =
-            "# Title page\n" +
+      function isInline(token) {return token.type === 'inline';}
+      function isParagraph(token) {return token.type === 'paragraph_open';}
+      function isListItem(token) {return token.type === 'list_item_open';}
 
-            "This is an example of index page hosted by themd. The goal of themd is to style your\n" +
-            "markdown files with CSS in one HTML file and optional CSS file.\n" +
+      function startsWithTodoMarkdown(token) {
+        return token.content.indexOf('[ ] ') === 0 || token.content.indexOf('[x] ') === 0 || token.content.indexOf('[X] ') === 0;
+      }
+    };
 
-            "## H2\n" +
+    var containerModule = function (md, name, options) {
+      function validateDefault(params) {
+        return params.trim().split(' ', 2)[0] === name;
+      }
+      function renderDefault(tokens, idx, _options, env, slf) {
+        if (tokens[idx].nesting === 1) 
+          tokens[idx].attrJoin('class', name);
+        return slf.renderToken(tokens, idx, _options, env, slf);
+      }
+      options = options || {};
+      const min_markers = options.minMarkerCount || 3,
+            marker_str  = options.marker || ':',
+            end_marker_str  = options.endMarker || marker_str,
+            end_marker_len = end_marker_str.length,
+            marker_char = marker_str.charCodeAt(0),
+            marker_len  = marker_str.length,
+            validate    = options.validate || validateDefault,
+            render      = options.render || renderDefault,
+            customContent = !!options.content;
+    
+      function container(state, startLine, endLine, silent) {
+        let pos, nextLine, marker_count, markup, params, token,
+            old_parent, old_line_max,
+            blockStart,
+            auto_closed = false,
+            start = blockStart = state.bMarks[startLine] + state.tShift[startLine],
+            max = state.eMarks[startLine];
 
-            "**Some bold text**\n" +
-            "*Some italic text*\n" +
-            "***Some bold italic text***"
+        if (marker_char !== state.src.charCodeAt(start)) { return false; }
+    
+        for (pos = start + 1; pos <= max; pos++) {
+          if (marker_str[(pos - start) % marker_len] !== state.src[pos]) {
+            break;
+          }
+        }
+    
+        marker_count = Math.floor((pos - start) / marker_len);
+        if (marker_count < min_markers) { return false; }
+        pos -= (pos - start) % marker_len;
+    
+        markup = state.src.slice(start, pos);
+        params = state.src.slice(pos, max);
+        if (!validate(params, markup)) { return false; }
+    
+        if (silent) { return true; }
+    
+        const contentStart = max;
+    
+        nextLine = startLine;
+    
+        for (;;) {
+          nextLine++;
+          if (nextLine >= endLine) 
+            break;
+    
+          start = state.bMarks[nextLine] + state.tShift[nextLine];
+          max = state.eMarks[nextLine];
+    
+          if (start < max && state.sCount[nextLine] < state.blkIndent)
+            break;
+    
+          if (marker_char !== state.src.charCodeAt(start)) { continue; }
+    
+          if (state.sCount[nextLine] - state.blkIndent >= 4) 
+            continue;
+    
+          for (pos = start + 1; pos <= max; pos++) {
+            if (end_marker_str[(pos - start) % end_marker_len] !== state.src[pos]) {
+              break;
+            }
+          }
+    
+          if (Math.floor((pos - start) / end_marker_len) < marker_count) { continue; }
+    
+          pos -= (pos - start) % end_marker_len;
+          pos = state.skipSpaces(pos);
+    
+          if (pos < max) { continue; }
+    
+          auto_closed = true;
+          break;
+        }
+    
+        old_parent = state.parentType;
+        old_line_max = state.lineMax;
+        state.parentType = 'container';
 
-        console.log(converter.makeHtml(md))
-    </script>
+        state.lineMax = nextLine;
+    
+        token        = state.push('container_' + name + '_open', 'div', 1);
+        token.markup = markup;
+        token.block  = true;
+        token.info   = params;
+        token.map    = [ startLine, nextLine ];
+        token.position = blockStart;
+        token.size = state.eMarks[nextLine] - blockStart;
+    
+        if (customContent) {
+          token = state.push('container_' + name + '_content', 'div', 0);
+          token.markup = state.src.slice(contentStart, start);
+          token.block = true;
+          token.position = contentStart;
+          token.size = token.markup.length;
+        } else {
+          state.md.block.tokenize(state, startLine + 1, nextLine);
+        }
+    
+        token        = state.push('container_' + name + '_close', 'div', -1);
+        token.markup = state.src.slice(start, pos);
+        token.block  = true;
+        token.position = pos;
+        token.size = 0;
+    
+        state.parentType = old_parent;
+        state.lineMax = old_line_max;
+        state.line = nextLine + (auto_closed ? 1 : 0);
+    
+        return true;
+      }
+    
+      md.block.ruler.before('fence', 'container_' + name, container, {
+        alt: [ 'paragraph', 'reference', 'blockquote', 'list' ]
+      });
+      md.renderer.rules['container_' + name + '_open'] = render;
+      if (customContent) {
+        md.renderer.rules['container_' + name + '_content'] = options.content;
+      }
+      md.renderer.rules['container_' + name + '_close'] = render;
+    }
+  </script>
+
+  <!-- default theme -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Asap&display=swap');
+
+    :root {
+      --background: #FFFFFF;
+      --accent: #FCA311;
+      --color: #14213D;
+    }
+
+    * {
+      padding: 0px;
+      margin: 0px;
+    }
+
+    body {
+      font-family: 'Asap', sans-serif;
+      min-width: calc(100% - 20px);
+      min-height: 100%;
+      background: var(--background);
+      color: var(--color);
+      padding: 10px;
+    }
+
+    #content {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    #mark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      opacity: 0.3;
+    }
+  </style>
+
+  <!-- Appending custom theme -->
+  <script>
+    var converter = window.markdownit().use(taskListModule).use(containerModule, 'decorate' , {
+      validate: function(params) {
+          return params.trim().match(/^(.*)$/);
+      },
+
+      render: function (tokens, idx) {
+          var m = tokens[idx].info.trim().match(/^(.*)$/);
+
+          if (tokens[idx].nesting === 1) {
+              return '<div '+ m[0] +'>\n';
+
+          } else {
+              // closing tag
+              return '</div>\n';
+          }
+      }
+   })
+
+    var contentHttpReq = new XMLHttpRequest();
+    var contentPath = window.location.search.slice(1).split('/')[0] == '' ? window.location.origin + '/pages/index.md' : window.location.origin + '/pages/' + window.location.search.slice(1).split('/')[0] + '.md';
+    contentHttpReq.open("GET", contentPath, false);
+    contentHttpReq.send(null);
+
+    var md = contentHttpReq.responseText
+    var themeName = md.split('\n').shift();
+
+    md = md.split('\n').splice(1, md.length - 1).join('\n')
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelector('#content').innerHTML = converter.render(md)
+    })
+
+
+    var styleHttpReq = new XMLHttpRequest();
+    styleHttpReq.open("GET", 'https://themd.jasiukiewicztym.repl.co/themes/' + themeName.toLowerCase() + '.css', false);
+    styleHttpReq.send(null);
+
+    // appending style
+    document.head.innerHTML += `<style>${styleHttpReq.responseText}</style>`
+
+    hljs.highlightAll();
+  </script>
 </head>
 
 <body>
-    <div id="content">
-        <h1>fdsdfs</h1>
-    </div>
-    <b id="mark">POWERED BY THEMD</b>
+  <div id="content">
+  </div>
+  <b id="mark">POWERED BY THEMD</b>
 </body>
 
 </html>
