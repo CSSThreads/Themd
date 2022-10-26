@@ -1489,7 +1489,7 @@
   	exclamation: "❗",
   	heavy_exclamation_mark: "❗",
   	wavy_dash: "〰️",
-  	currency_ex�change: "💱",
+  	currency_exchange: "💱",
   	heavy_dollar_sign: "💲",
   	medical_symbol: "⚕️",
   	recycle: "♻️",
@@ -1858,7 +1858,7 @@
   	england: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
   	scotland: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
   	wales: "🏴󠁧󠁢󠁷󠁬󠁳󠁿"
-�  };
+   };
 
   // Emoticons -> Emoji mapping.
 
