@@ -24,8 +24,11 @@ h4 { font-size: 1.2em; padding-left: 6px; }
 h5 { font-size: 1em; padding-left: 7px; }
 h6 { font-size: 0.9em; padding-left: 7.5px; }
 
-p {
+p, details, ul, table, img {
   padding-left: 40px;
+}
+
+p {
   padding-bottom: 15px;
 }
 
@@ -35,6 +38,9 @@ blockquote {
   margin-top: 10px;
   margin-bottom: 25px;
 }
+blockquote:has(blockquote) {
+  padding-bottom: 10px;
+}
 blockquote > p {
   padding-left: 36px;
 }
@@ -43,7 +49,6 @@ details > * {
   margin-left: 10px;
 }
 details {
-  padding-left: 40px;
   margin-left: 0px;
 }
 #content > details {
@@ -63,8 +68,8 @@ ol {
 }
 
 ol > li { counter-increment: item; }
-ol > li:before { 
-  content: counter(item);
+ol > li > p:before { 
+  content: counter(item) ".";
   margin-right: 10px;
 }
 ul { list-style: inside; }
@@ -72,12 +77,8 @@ ul { list-style: inside; }
 *:not(li) > ol, *:not(li) > ul {
   padding-bottom: 12px;
 }
-*:not(li) > ol, ul {
-  padding-left: 40px;
-}
 
 table {
-  padding-left: 40px;
   margin-bottom: 15px;
   border-spacing: 0px;
 }
@@ -98,11 +99,30 @@ input {
   margin-left: 3px;
 }
 
-img {
-  max-width: 90% !important;
+img, p > img {
+  max-width: 90%;
 }
 
 hr {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   margin-top: 10px;
   margin-bottom: 15px;
+}
+
+pre {
+  margin-left: 40px;
+  padding-bottom: 20px;
+}
+
+@media screen and (min-width: 1000px) {
+  hr {
+    left: 40px;
+    transform: none;
+    width: 1000px !important;
+  }
+}
+@media screen and (max-width: 1001px) {
+  hr { max-width: 90%; }
 }
