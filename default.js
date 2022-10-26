@@ -60,3 +60,5 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 hljs.highlightAll();
+
+document.head.removeChild(document.head.querySelector('head:last-child'))
