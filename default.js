@@ -38,7 +38,7 @@ var converter = window.markdownit({
 })
 
 var contentHttpReq = new XMLHttpRequest();
-var contentPath = window.location.search.slice(1).split('/')[0] == '' ? window.location.origin + '/mdx/index.md' : window.location.origin + '/mdx/' + window.location.search.slice(1).split('/')[0] + '.md';
+var contentPath = window.location.search.slice(1).split('/')[0] == '' ? window.location.origin + '/pages/index.themd' : window.location.origin + '/pages/' + window.location.search.slice(1).split('/')[0] + '.themd';
 contentHttpReq.open("GET", contentPath, false);
 contentHttpReq.send(null);
 
