@@ -1,6 +1,3 @@
-let styles = document.head.querySelectorAll('style');
-document.head.removeChild(styles[styles.length - 1])
-
 var converter = window.markdownit({
   html: true,
   linkify: true
@@ -59,6 +56,8 @@ document.head.innerHTML += `<style>${styleHttpReq.responseText}</style>`
 md = md.split('\n').splice(1, md.length - 1).join('\n')
 
 document.addEventListener('DOMContentLoaded', () => {
+  let styles = document.head.querySelectorAll('style');
+  document.head.removeChild(styles[styles.length - 1])
   document.querySelector('#content').innerHTML = converter.render(md)
 })
 
