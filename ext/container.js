@@ -15,7 +15,7 @@ var containerModule = function (md, name, options) {
             marker_char = marker_str.charCodeAt(0),
             marker_len  = marker_str.length,
             validate    = options.validate || validateDefault,
-            render      = options.render || renderDefault,
+            render      = options.render || renderDefault, 
             customContent = !!options.content;
     
       function container(state, startLine, endLine, silent) {
