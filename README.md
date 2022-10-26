@@ -1,2 +1,3 @@
-# themd
-Style your md on github pages like you want
+# Themd
+
+Cool github pages customisable md with js display, attributes, components and math library
