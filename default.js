@@ -46,7 +46,7 @@ var md = contentHttpReq.responseText
 var themeName = md.split('\n').shift();
 
 var styleHttpReq = new XMLHttpRequest();
-var styleURL = `${window.location.origin}/themes/${themeName.toLowerCase()}.css`;
+var styleURL = `https://raw.githubusercontent.com/LightWindCss/Themd/main/themes/${themeName.toLowerCase()}.css`;
 styleHttpReq.open("GET", styleURL, false);
 styleHttpReq.send(null);
 
@@ -56,8 +56,6 @@ document.head.innerHTML += `<style>${styleHttpReq.responseText}</style>`
 md = md.split('\n').splice(1, md.length - 1).join('\n')
 
 document.addEventListener('DOMContentLoaded', () => {
-  let styles = document.head.querySelectorAll('style');
-  document.head.removeChild(styles[styles.length - 1])
   document.querySelector('#content').innerHTML = converter.render(md)
 })
 
