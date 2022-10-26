@@ -1,3 +1,6 @@
+let styles = document.head.querySelectorAll('style');
+document.head.removeChild(styles[styles.length - 1])
+
 var converter = window.markdownit({
   html: true,
   linkify: true
@@ -60,7 +63,3 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 hljs.highlightAll();
-
-
-let styles = document.head.querySelectorAll('style');
-document.head.removeChild(styles[styles.length - 1])
