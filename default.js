@@ -38,7 +38,7 @@ var converter = window.markdownit({
 })
 
 var contentHttpReq = new XMLHttpRequest();
-var contentPath = window.location.search.slice(1).split('/')[0] == '' ? window.location.origin + '/pages/index.md' : window.location.origin + '/pages/' + window.location.search.slice(1).split('/')[0] + '.md';
+var contentPath = window.location.search.slice(1).split('/')[0] == '' ? window.location.origin + '/mdx/index.md' : window.location.origin + '/mdx/' + window.location.search.slice(1).split('/')[0] + '.md';
 contentHttpReq.open("GET", contentPath, false);
 contentHttpReq.send(null);
 
@@ -46,7 +46,8 @@ var md = contentHttpReq.responseText
 var themeName = md.split('\n').shift();
 
 var styleHttpReq = new XMLHttpRequest();
-styleHttpReq.open("GET", 'https://themd.jasiukiewicztym.repl.co/themes/themd.css', false);
+var styleURL = `${window.location.origin}/themes/${themeName.toLowerCase()}.css`;
+styleHttpReq.open("GET", styleURL, false);
 styleHttpReq.send(null);
 
 // appending style
