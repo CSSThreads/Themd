@@ -38,7 +38,7 @@ var converter = window.markdownit({
 })
 
 var contentHttpReq = new XMLHttpRequest();
-var contentPath = window.location.search.slice(1).split('/')[0] == '' ? window.location.origin + '/pages/index.themd' : window.location.origin + '/pages/' + window.location.search.slice(1).split('/')[0] + '.themd';
+var contentPath = window.location.search.slice(1).split('/')[0] == '' ? 'https://raw.githubusercontent.com/LightWindCss/Themd/pages/index.md' : 'https://raw.githubusercontent.com/LightWindCss/Themd/pages/' + window.location.search.slice(1).split('/')[0] + '.md';
 contentHttpReq.open("GET", contentPath, false);
 contentHttpReq.send(null);
 
