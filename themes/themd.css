@@ -38,8 +38,9 @@ blockquote {
   margin-top: 10px;
   margin-bottom: 25px;
 }
-blockquote:has(blockquote) {
-  padding-bottom: 10px;
+blockquote *:last-child {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
 }
 blockquote > p {
   padding-left: 36px;
