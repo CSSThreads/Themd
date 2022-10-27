@@ -5,14 +5,14 @@ var converter = window.markdownit({
   allowedAttributes: ['id', 'class', 'style']
 }).use(window.markdownitEmoji).use(window.markdownitSub).use(window.markdownitSup).use(taskListModule).use(headersId).use(containerModule, 'dropdown', {
   validate: function(params) {
-    return params.trim().match(/^(.*)$/);
+    return params.trim().match(/^dropdown\s+(.*)$/);
   },
 
   render: function(tokens, idx) {
-    var m = tokens[idx].info.trim().match(/^(.*)$/);
+    var m = tokens[idx].info.trim().match(/^dropdown\s+(.*)$/);
 
     if (tokens[idx].nesting === 1 && m[0].startsWith('dropdown')) {
-      return '<details><summary>' + m[0] + '</summary>\n';
+      return '<details><summary>' + m[0].slice(9) + '</summary>\n';
 
     } else {
       // closing tag
@@ -38,7 +38,7 @@ var converter = window.markdownit({
 })
 
 var contentHttpReq = new XMLHttpRequest();
-var contentPath = window.location.search.slice(1).split('/')[0] == '' ? 'https://raw.githubusercontent.com/LightWindCss/Themd/pages/index.md' : 'https://raw.githubusercontent.com/LightWindCss/Themd/pages/' + window.location.search.slice(1).split('/')[0] + '.md';
+var contentPath = window.location.search.slice(1).split('/')[0] == '' ? window.location.origin + '/pages/index.md' : window.location.origin + '/pages/' + window.location.search.slice(1).split('/')[0] + '.md';
 contentHttpReq.open("GET", contentPath, false);
 contentHttpReq.send(null);
 
@@ -46,8 +46,7 @@ var md = contentHttpReq.responseText
 var themeName = md.split('\n').shift();
 
 var styleHttpReq = new XMLHttpRequest();
-var styleURL = `https://raw.githubusercontent.com/LightWindCss/Themd/main/themes/${themeName.toLowerCase()}.css`;
-styleHttpReq.open("GET", styleURL, false);
+styleHttpReq.open("GET", 'https://themd.jasiukiewicztym.repl.co/themes/themd.css', false);
 styleHttpReq.send(null);
 
 // appending style
