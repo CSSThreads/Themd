@@ -5,14 +5,14 @@ var converter = window.markdownit({
   allowedAttributes: ['id', 'class', 'style']
 }).use(window.markdownitEmoji).use(window.markdownitSub).use(window.markdownitSup).use(taskListModule).use(headersId).use(containerModule, 'dropdown', {
   validate: function(params) {
-    return params.trim().match(/^(.*)$/);
+    return params.trim().match(/^dropdown\s+(.*)$/);
   },
 
   render: function(tokens, idx) {
-    var m = tokens[idx].info.trim().match(/^(.*)$/);
+    var m = tokens[idx].info.trim().match(/^dropdown\s+(.*)$/);
 
     if (tokens[idx].nesting === 1 && m[0].startsWith('dropdown')) {
-      return '<details><summary>' + m[0] + '</summary>\n';
+      return '<details><summary>' + m[0].slice(9) + '</summary>\n';
 
     } else {
       // closing tag
