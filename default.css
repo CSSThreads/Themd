@@ -1,39 +1,168 @@
 @import url('https://fonts.googleapis.com/css2?family=Encode+Sans:wght@100;200;300;400;500;600;700&display=swap');
 
-    :root {
-      --background: #FFFFFF;
-      --secondary: #E8E8E8;
-      --accent: #FCA311;
-      --color: #14213D;
-    }
+:root {
+  --background: #FFFFFF;
+  --secondary: #E8E8E8;
+  --accent: #FCA311;
+  --color: #14213D;
+}
 
-    * {
-      padding: 0px;
-      margin: 0px;
-    }
+* {
+  padding: 0px;
+  margin: 0px;
+}
 
-    body {
-      font-family: 'Encode Sans', sans-serif;
-      min-width: calc(100% - 20px);
-      min-height: 100%;
-      background: var(--background);
-      color: var(--color);
-      padding: 10px;
-      padding-top: 30px;
-    }
+body {
+  font-family: 'Encode Sans', sans-serif;
+  min-width: calc(100% - 20px);
+  min-height: 100%;
+  background: var(--background);
+  color: var(--color);
+  padding: 10px;
+  padding-top: 30px;
+}
 
-    #content {
-      width: calc(100% - 40px);
-      max-width: 1000px;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      overflow: hidden;
-    }
+#content {
+  width: calc(100% - 40px);
+  max-width: 1000px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  overflow: hidden;
+}
 
-    #mark {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      opacity: 0.3;
-    }
+#mark {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  opacity: 0.3;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-decoration: underline;
+  font-weight: bold;
+  padding-bottom: 10px;
+  position: relative;
+  left: 17px;
+  cursor: pointer;
+}
+h1::before, h2::before, h3::before, 
+h4::before, h5::before, h6::before {
+  content: "§";
+  margin-right: 7px;
+  opacity: 0;
+  transition: 0.2s ease-in-out;
+  display:inline-block;
+}
+h1:hover::before, h2:hover::before, h3:hover::before, 
+h4:hover::before, h5:hover::before, h6:hover::before {
+  opacity: 0.9;
+}
+h2 { font-size: 1.7em; padding-left: 2px; }
+h3 { font-size: 1.4em; padding-left: 5px; }
+h4 { font-size: 1.2em; padding-left: 6px; }
+h5 { font-size: 1em; padding-left: 7px; }
+h6 { font-size: 0.9em; padding-left: 7.5px; }
+
+p, details, ul, table, img {
+  padding-left: 40px;
+}
+
+p {
+  padding-bottom: 15px;
+}
+
+blockquote {
+  border-left: var(--accent) 4px solid;
+  margin-left: 40px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+}
+blockquote *:last-child {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+blockquote > p {
+  padding-left: 36px;
+}
+
+details > * {
+  margin-left: 10px;
+}
+details {
+  margin-left: 0px;
+}
+#content > details {
+  margin-left: -10px;
+}
+summary {
+  padding-bottom: 10px;
+}
+details summary::marker {
+  color: var(--accent);
+  background: var(--accent);
+}
+
+ol {
+  list-style: none;
+  counter-reset: num;
+}
+
+ol > li { counter-increment: item; }
+ol > li > p:before { 
+  content: counter(item) ".";
+  margin-right: 10px;
+}
+ul { list-style: inside; }
+
+*:not(li) > ol, *:not(li) > ul {
+  padding-bottom: 12px;
+}
+
+table {
+  margin-bottom: 15px;
+  border-spacing: 0px;
+}
+th, td{
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+tbody tr:nth-child(odd) {
+  background: var(--secondary);
+}
+
+ul:has(input) {
+  list-style: none;
+}
+input {
+  margin-left: 3px;
+}
+
+img, p > img {
+  max-width: 90%;
+}
+
+hr {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+pre {
+  margin-left: 40px;
+  padding-bottom: 20px;
+}
+
+@media screen and (min-width: 1000px) {
+  hr {
+    left: 40px;
+    transform: none;
+    width: 1000px !important;
+  }
+}
+@media screen and (max-width: 1001px) {
+  hr { max-width: 90%; }
+}
