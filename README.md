@@ -8,3 +8,5 @@ Cool github pages customisable md with js display, attributes, components and ma
 
 
 => Deploy to GitHub Pages using GitHub Actions
+
+Mdx & Md static page generator...
