@@ -27,6 +27,7 @@ The destination directory of generated website.
 |    |__ page.mdx
 |    |__ <lang>.json
 |    |__ default.json
+|    |__ components.jsx
 |\__ /themes
 | |__ <theme>.css
 \__ /dist
